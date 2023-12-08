@@ -9,6 +9,7 @@ import (
 	"github.com/99designs/gqlgen/graphql/handler"
 	"github.com/99designs/gqlgen/graphql/playground"
 	"github.com/oribe1115/peta/graph"
+	"github.com/oribe1115/peta/model"
 )
 
 const defaultPort = "3000"
@@ -19,7 +20,16 @@ func main() {
 		port = defaultPort
 	}
 
-	srv := handler.NewDefaultServer(graph.NewExecutableSchema(graph.Config{Resolvers: &graph.Resolver{}}))
+	db, err := model.ConnectDB()
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	resolver := &graph.Resolver{
+		DB: db,
+	}
+
+	srv := handler.NewDefaultServer(graph.NewExecutableSchema(graph.Config{Resolvers: resolver}))
 
 	http.Handle("/", playground.Handler("GraphQL playground", "/query"))
 	http.Handle("/query", traPIDMiddleware(srv))
