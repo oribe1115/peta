@@ -11,14 +11,14 @@ import (
 	"github.com/oribe1115/peta/graph/gmodel"
 )
 
-// CreateTodo is the resolver for the createTodo field.
-func (r *mutationResolver) CreateTodo(ctx context.Context, input gmodel.NewTodo) (*gmodel.Todo, error) {
-	panic(fmt.Errorf("not implemented: CreateTodo - createTodo"))
+// CreatePaste is the resolver for the createPaste field.
+func (r *mutationResolver) CreatePaste(ctx context.Context, input gmodel.NewPaste) (*gmodel.Paste, error) {
+	panic(fmt.Errorf("not implemented: CreatePaste - createPaste"))
 }
 
-// Todos is the resolver for the todos field.
-func (r *queryResolver) Todos(ctx context.Context) ([]*gmodel.Todo, error) {
-	panic(fmt.Errorf("not implemented: Todos - todos"))
+// Paste is the resolver for the paste field.
+func (r *queryResolver) Paste(ctx context.Context, id string) (*gmodel.Paste, error) {
+	panic(fmt.Errorf("not implemented: Paste - paste"))
 }
 
 // Mutation returns MutationResolver implementation.

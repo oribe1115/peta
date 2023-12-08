@@ -2,19 +2,21 @@
 
 package gmodel
 
-type NewTodo struct {
-	Text   string `json:"text"`
-	UserID string `json:"userId"`
+import (
+	"time"
+)
+
+type NewPaste struct {
+	Title    string  `json:"title"`
+	Content  string  `json:"content"`
+	Language *string `json:"language,omitempty"`
 }
 
-type Todo struct {
-	ID   string `json:"id"`
-	Text string `json:"text"`
-	Done bool   `json:"done"`
-	User *User  `json:"user"`
-}
-
-type User struct {
-	ID   string `json:"id"`
-	Name string `json:"name"`
+type Paste struct {
+	ID        string    `json:"id"`
+	Author    string    `json:"author"`
+	Title     string    `json:"title"`
+	Content   string    `json:"content"`
+	Language  *string   `json:"language,omitempty"`
+	CreatedAt time.Time `json:"createdAt"`
 }
