@@ -7,8 +7,10 @@ package graph
 import (
 	"context"
 	"fmt"
+	"time"
 
 	"github.com/oribe1115/peta/graph/gmodel"
+	"github.com/vektah/gqlparser/v2/gqlerror"
 )
 
 // CreatePaste is the resolver for the createPaste field.
@@ -18,7 +20,21 @@ func (r *mutationResolver) CreatePaste(ctx context.Context, input gmodel.NewPast
 
 // Paste is the resolver for the paste field.
 func (r *queryResolver) Paste(ctx context.Context, id string) (*gmodel.Paste, error) {
-	panic(fmt.Errorf("not implemented: Paste - paste"))
+	traPID, ok := ctx.Value("traPID").(string)
+	if !ok || traPID == "" {
+		return nil, gqlerror.Errorf("Need login")
+	}
+
+	// TODO: Get from DB
+	paste := &gmodel.Paste{
+		ID:        "1",
+		Author:    "traP",
+		Title:     "title",
+		Content:   "content",
+		CreatedAt: time.Now(),
+	}
+
+	return paste, nil
 }
 
 // Mutation returns MutationResolver implementation.
