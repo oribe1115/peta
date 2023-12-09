@@ -4,6 +4,10 @@
 
 scalar Time
 
+type User {
+  traPId: ID!
+}
+
 type Paste {
   id: ID!
   author: String!
@@ -14,7 +18,8 @@ type Paste {
 }
 
 type Query {
-  paste(id: ID!): Paste 
+  accessUser: User!
+  paste(id: ID!): Paste! 
 }
 
 input NewPaste {

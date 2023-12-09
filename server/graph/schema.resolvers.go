@@ -36,6 +36,18 @@ func (r *mutationResolver) CreatePaste(ctx context.Context, input gmodel.NewPast
 	}, nil
 }
 
+// AccessUser is the resolver for the accessUser field.
+func (r *queryResolver) AccessUser(ctx context.Context) (*gmodel.User, error) {
+	traPID, ok := ctx.Value("traPID").(string)
+	if !ok || traPID == "" {
+		return nil, gqlerror.Errorf("Need login")
+	}
+
+	return &gmodel.User{
+		TraPId: traPID,
+	}, nil
+}
+
 // Paste is the resolver for the paste field.
 func (r *queryResolver) Paste(ctx context.Context, id string) (*gmodel.Paste, error) {
 	traPID, ok := ctx.Value("traPID").(string)

@@ -61,7 +61,12 @@ type ComplexityRoot struct {
 	}
 
 	Query struct {
-		Paste func(childComplexity int, id string) int
+		AccessUser func(childComplexity int) int
+		Paste      func(childComplexity int, id string) int
+	}
+
+	User struct {
+		TraPId func(childComplexity int) int
 	}
 }
 
@@ -69,6 +74,7 @@ type MutationResolver interface {
 	CreatePaste(ctx context.Context, input gmodel.NewPaste) (*gmodel.Paste, error)
 }
 type QueryResolver interface {
+	AccessUser(ctx context.Context) (*gmodel.User, error)
 	Paste(ctx context.Context, id string) (*gmodel.Paste, error)
 }
 
@@ -145,6 +151,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Paste.Title(childComplexity), true
 
+	case "Query.accessUser":
+		if e.complexity.Query.AccessUser == nil {
+			break
+		}
+
+		return e.complexity.Query.AccessUser(childComplexity), true
+
 	case "Query.paste":
 		if e.complexity.Query.Paste == nil {
 			break
@@ -156,6 +169,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Query.Paste(childComplexity, args["id"].(string)), true
+
+	case "User.traPId":
+		if e.complexity.User.TraPId == nil {
+			break
+		}
+
+		return e.complexity.User.TraPId(childComplexity), true
 
 	}
 	return 0, false
@@ -269,6 +289,10 @@ var sources = []*ast.Source{
 
 scalar Time
 
+type User {
+  traPId: ID!
+}
+
 type Paste {
   id: ID!
   author: String!
@@ -279,7 +303,8 @@ type Paste {
 }
 
 type Query {
-  paste(id: ID!): Paste 
+  accessUser: User!
+  paste(id: ID!): Paste! 
 }
 
 input NewPaste {
@@ -712,6 +737,54 @@ func (ec *executionContext) fieldContext_Paste_createdAt(ctx context.Context, fi
 	return fc, nil
 }
 
+func (ec *executionContext) _Query_accessUser(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Query_accessUser(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Query().AccessUser(rctx)
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*gmodel.User)
+	fc.Result = res
+	return ec.marshalNUser2ᚖgithubᚗcomᚋoribe1115ᚋpetaᚋgraphᚋgmodelᚐUser(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Query_accessUser(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Query",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "traPId":
+				return ec.fieldContext_User_traPId(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type User", field.Name)
+		},
+	}
+	return fc, nil
+}
+
 func (ec *executionContext) _Query_paste(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
 	fc, err := ec.fieldContext_Query_paste(ctx, field)
 	if err != nil {
@@ -733,11 +806,14 @@ func (ec *executionContext) _Query_paste(ctx context.Context, field graphql.Coll
 		return graphql.Null
 	}
 	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
 		return graphql.Null
 	}
 	res := resTmp.(*gmodel.Paste)
 	fc.Result = res
-	return ec.marshalOPaste2ᚖgithubᚗcomᚋoribe1115ᚋpetaᚋgraphᚋgmodelᚐPaste(ctx, field.Selections, res)
+	return ec.marshalNPaste2ᚖgithubᚗcomᚋoribe1115ᚋpetaᚋgraphᚋgmodelᚐPaste(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_Query_paste(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -902,6 +978,50 @@ func (ec *executionContext) fieldContext_Query___schema(ctx context.Context, fie
 				return ec.fieldContext___Schema_directives(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type __Schema", field.Name)
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _User_traPId(ctx context.Context, field graphql.CollectedField, obj *gmodel.User) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_User_traPId(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.TraPId, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNID2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_User_traPId(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "User",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type ID does not have child fields")
 		},
 	}
 	return fc, nil
@@ -2858,6 +2978,28 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 		switch field.Name {
 		case "__typename":
 			out.Values[i] = graphql.MarshalString("Query")
+		case "accessUser":
+			field := field
+
+			innerFunc := func(ctx context.Context, fs *graphql.FieldSet) (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Query_accessUser(ctx, field)
+				if res == graphql.Null {
+					atomic.AddUint32(&fs.Invalids, 1)
+				}
+				return res
+			}
+
+			rrm := func(ctx context.Context) graphql.Marshaler {
+				return ec.OperationContext.RootResolverMiddleware(ctx,
+					func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
+			}
+
+			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return rrm(innerCtx) })
 		case "paste":
 			field := field
 
@@ -2868,6 +3010,9 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 					}
 				}()
 				res = ec._Query_paste(ctx, field)
+				if res == graphql.Null {
+					atomic.AddUint32(&fs.Invalids, 1)
+				}
 				return res
 			}
 
@@ -2885,6 +3030,45 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
 				return ec._Query___schema(ctx, field)
 			})
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch(ctx)
+	if out.Invalids > 0 {
+		return graphql.Null
+	}
+
+	atomic.AddInt32(&ec.deferred, int32(len(deferred)))
+
+	for label, dfs := range deferred {
+		ec.processDeferredGroup(graphql.DeferredGroup{
+			Label:    label,
+			Path:     graphql.GetPath(ctx),
+			FieldSet: dfs,
+			Context:  ctx,
+		})
+	}
+
+	return out
+}
+
+var userImplementors = []string{"User"}
+
+func (ec *executionContext) _User(ctx context.Context, sel ast.SelectionSet, obj *gmodel.User) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, userImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	deferred := make(map[string]*graphql.FieldSet)
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("User")
+		case "traPId":
+			out.Values[i] = ec._User_traPId(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}
@@ -3313,6 +3497,20 @@ func (ec *executionContext) marshalNTime2timeᚐTime(ctx context.Context, sel as
 	return res
 }
 
+func (ec *executionContext) marshalNUser2githubᚗcomᚋoribe1115ᚋpetaᚋgraphᚋgmodelᚐUser(ctx context.Context, sel ast.SelectionSet, v gmodel.User) graphql.Marshaler {
+	return ec._User(ctx, sel, &v)
+}
+
+func (ec *executionContext) marshalNUser2ᚖgithubᚗcomᚋoribe1115ᚋpetaᚋgraphᚋgmodelᚐUser(ctx context.Context, sel ast.SelectionSet, v *gmodel.User) graphql.Marshaler {
+	if v == nil {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			ec.Errorf(ctx, "the requested element is null which the schema does not allow")
+		}
+		return graphql.Null
+	}
+	return ec._User(ctx, sel, v)
+}
+
 func (ec *executionContext) marshalN__Directive2githubᚗcomᚋ99designsᚋgqlgenᚋgraphqlᚋintrospectionᚐDirective(ctx context.Context, sel ast.SelectionSet, v introspection.Directive) graphql.Marshaler {
 	return ec.___Directive(ctx, sel, &v)
 }
@@ -3590,13 +3788,6 @@ func (ec *executionContext) marshalOBoolean2ᚖbool(ctx context.Context, sel ast
 	}
 	res := graphql.MarshalBoolean(*v)
 	return res
-}
-
-func (ec *executionContext) marshalOPaste2ᚖgithubᚗcomᚋoribe1115ᚋpetaᚋgraphᚋgmodelᚐPaste(ctx context.Context, sel ast.SelectionSet, v *gmodel.Paste) graphql.Marshaler {
-	if v == nil {
-		return graphql.Null
-	}
-	return ec._Paste(ctx, sel, v)
 }
 
 func (ec *executionContext) unmarshalOString2ᚖstring(ctx context.Context, v interface{}) (*string, error) {

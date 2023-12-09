@@ -20,3 +20,7 @@ type Paste struct {
 	Language  *string   `json:"language,omitempty"`
 	CreatedAt time.Time `json:"createdAt"`
 }
+
+type User struct {
+	TraPId string `json:"traPId"`
+}
