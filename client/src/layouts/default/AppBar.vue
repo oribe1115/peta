@@ -3,6 +3,7 @@
     <v-app-bar-title>
       Peta
     </v-app-bar-title>
+    {{ traPId }}
   </v-app-bar>
 </template>
 
@@ -11,13 +12,12 @@ import { graphql } from '@/gql';
 import { useQuery } from '@apollo/client';
 import { computed } from 'vue';
 
-
-const {result} = useQuery(graphql(/* GraphQL */ `
-query getAccessUser(){
-  accessUser(){
+const {data} = useQuery(graphql(/* GraphQL */ `
+query getAccessUser {
+  accessUser {
     traPId
   }
 }
-`))
-const traPId = computed(() => result)
+`),{})
+const traPId = computed(() => data?.accessUser.traPId)
 </script>

@@ -1,4 +1,5 @@
 /* eslint-disable */
+import { TypedDocumentNode as DocumentNode } from '@graphql-typed-document-node/core';
 export type Maybe<T> = T | null;
 export type InputMaybe<T> = Maybe<T>;
 export type Exact<T extends { [key: string]: unknown }> = { [K in keyof T]: T[K] };
@@ -57,3 +58,11 @@ export type User = {
   __typename?: 'User';
   traPId: Scalars['ID']['output'];
 };
+
+export type GetAccessUserQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type GetAccessUserQuery = { __typename?: 'Query', accessUser: { __typename?: 'User', traPId: string } };
+
+
+export const GetAccessUserDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"getAccessUser"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"accessUser"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"traPId"}}]}}]}}]} as unknown as DocumentNode<GetAccessUserQuery, GetAccessUserQueryVariables>;

@@ -7,7 +7,7 @@
     "build": "vue-tsc --noEmit && vite build",
     "preview": "vite preview",
     "lint": "eslint . --fix --ignore-path .gitignore",
-    "codegen": "graphql-codegen",
+    "codegen": "graphql-codegen --config codegen.ts",
     "codegen-watch": "graphql-codegen --watch"
   },
   "dependencies": {
@@ -26,8 +26,9 @@
   "devDependencies": {
     "@0no-co/graphqlsp": "^0.11.2",
     "@babel/types": "^7.21.4",
-    "@graphql-codegen/cli": "^5.0.0",
-    "@graphql-codegen/client-preset": "^4.1.0",
+    "@graphql-codegen/cli": "5.0.0",
+    "@graphql-codegen/client-preset": "4.1.0",
+    "@graphql-codegen/introspection": "4.0.0",
     "@parcel/watcher": "^2.3.0",
     "@types/node": "^18.15.0",
     "@vitejs/plugin-vue": "^4.0.0",
