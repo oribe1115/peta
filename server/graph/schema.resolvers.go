@@ -6,8 +6,8 @@ package graph
 
 import (
 	"context"
-	"fmt"
-	"time"
+	"log/slog"
+	"strconv"
 
 	"github.com/oribe1115/peta/graph/gmodel"
 	"github.com/vektah/gqlparser/v2/gqlerror"
@@ -15,7 +15,25 @@ import (
 
 // CreatePaste is the resolver for the createPaste field.
 func (r *mutationResolver) CreatePaste(ctx context.Context, input gmodel.NewPaste) (*gmodel.Paste, error) {
-	panic(fmt.Errorf("not implemented: CreatePaste - createPaste"))
+	traPID, ok := ctx.Value("traPID").(string)
+	if !ok || traPID == "" {
+		return nil, gqlerror.Errorf("Need login")
+	}
+
+	paste, err := r.DB.CreateDB(traPID, input.Title, input.Content, input.Language)
+	if err != nil {
+		slog.Error(err.Error())
+		return nil, gqlerror.Errorf("Internal server error")
+	}
+
+	return &gmodel.Paste{
+		ID:        strconv.Itoa(paste.ID),
+		Author:    paste.Author,
+		Title:     paste.Title,
+		Content:   paste.Content,
+		Language:  paste.Language,
+		CreatedAt: paste.CreatedAt,
+	}, nil
 }
 
 // Paste is the resolver for the paste field.
@@ -25,16 +43,29 @@ func (r *queryResolver) Paste(ctx context.Context, id string) (*gmodel.Paste, er
 		return nil, gqlerror.Errorf("Need login")
 	}
 
-	// TODO: Get from DB
-	paste := &gmodel.Paste{
-		ID:        "1",
-		Author:    "traP",
-		Title:     "title",
-		Content:   "content",
-		CreatedAt: time.Now(),
+	idInt, err := strconv.Atoi(id)
+	if err != nil {
+		return nil, gqlerror.Errorf("Unexpected id format")
 	}
 
-	return paste, nil
+	paste, err := r.DB.GetPaste(idInt)
+	if err != nil {
+		slog.Error(err.Error())
+		return nil, gqlerror.Errorf("Internal server error")
+	}
+
+	if paste == nil {
+		return nil, gqlerror.Errorf("Not found")
+	}
+
+	return &gmodel.Paste{
+		ID:        strconv.Itoa(paste.ID),
+		Author:    paste.Author,
+		Title:     paste.Title,
+		Content:   paste.Content,
+		Language:  paste.Language,
+		CreatedAt: paste.CreatedAt,
+	}, nil
 }
 
 // Mutation returns MutationResolver implementation.
