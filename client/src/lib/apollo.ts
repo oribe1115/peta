@@ -7,7 +7,7 @@ import {
 // HTTP connection to the API
 const httpLink = createHttpLink({
   // You should use an absolute URL here
-  uri: "hhttp://localhost:3000/query",
+  uri: "http://localhost:3000/query",
 });
 
 // Cache implementation

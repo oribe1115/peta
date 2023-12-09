@@ -9,15 +9,15 @@
 
 <script lang="ts" setup>
 import { graphql } from '@/gql';
-import { useQuery } from '@apollo/client';
+import { useQuery } from '@vue/apollo-composable';
 import { computed } from 'vue';
 
-const {data} = useQuery(graphql(/* GraphQL */ `
+const {result} = useQuery(graphql(/* GraphQL */ `
 query getAccessUser {
   accessUser {
     traPId
   }
 }
 `),{})
-const traPId = computed(() => data?.accessUser.traPId)
+const traPId = computed(() => result?.value?.accessUser.traPId)
 </script>
