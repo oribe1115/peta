@@ -1,5 +1,0 @@
-query getAccessUser() {
-    accessUser(){
-        traPId
-    }
-}
